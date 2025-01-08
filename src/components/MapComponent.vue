@@ -148,10 +148,10 @@
             this.measurementOverlays = [];
             // Listen to events from RightSideBar
             eventBus.on('set-measurement-mode', this.setMeasurementMode);
+            eventBus.on('clear-measurements', this.deactivateMeasurement);
             eventBus.on('clear-measurements', this.clearMeasurements);
             eventBus.on('cropToolToggled', this.toggleCropTool);
             eventBus.on('search-query', this.handleSearchQuery);
-
         },
 
         methods: {
@@ -160,6 +160,7 @@
                 view.animate({center: this.center, zoom: this.zoom, rotation: 0, duration: 1000 });
             },
             setMeasurementMode(mode) {
+                this.deactivateMeasurement();
                 this.measurementMode = mode;
                 this.activateMeasurement(mode);
             },
@@ -218,13 +219,15 @@
                 this.measurementOverlays.push(overlay);
             },
           
-            clearMeasurements() {
+            deactivateMeasurement() {
                 if (this.drawInteraction) {
                     this.map.removeInteraction(this.drawInteraction);
                 }
                 if (this.modifyInteraction) {
                     this.map.removeInteraction(this.modifyInteraction);
                 }
+            },
+            clearMeasurements() {
                 this.measurementSource.clear();
                 this.measurementOverlays.forEach((overlay) => {
                     this.map.removeOverlay(overlay);
@@ -265,15 +268,9 @@
                 this.searchPlace(query);
             },
             flyTo(location, zoomLevel) {
-        const view = this.map.getView();
-    
-        // Animate the transition to the new location
-        view.animate({
-            center: location,
-            zoom: zoomLevel,
-            duration: 1000 // 5 seconds
-        });
-    },
+                const view = this.map.getView();
+                view.animate({center: location,zoom: zoomLevel,duration: 1000  });
+            },
             async searchPlace(query) {
                 try {
                     const response = await axios.get('https://nominatim.openstreetmap.org/search', {
@@ -296,6 +293,7 @@
         beforeUnmount() {
         eventBus.off('search-query', this.handleSearchQuery);  
         eventBus.off('set-measurement-mode', this.setMeasurementMode);
+        eventBus.off('clear-measurements', this.deactivateMeasurement);
       }
     };
     </script>
