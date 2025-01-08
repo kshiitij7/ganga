@@ -9,7 +9,7 @@
             <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
 
-        <v-scroll-x-reverse-transition>
+        <v-expand-transition>
     <v-card :key="currentCardIndex" :prepend-icon="currentCard.icon" width="400" class="card">
       <template v-slot:title>
         <div class="d-flex justify-space-between align-center">
@@ -22,7 +22,7 @@
         {{ currentCard.text }}
       </v-card-text>
     </v-card>
-</v-scroll-x-reverse-transition>
+</v-expand-transition>
 
 </div>
 </v-main>
